@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Penguin Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+</head>
+<body>
+    <!-- This is the frame for our game. it holds and centers all other elements -->
+    <!-- 9 snow mounds and yeti -->
+    <div id="gameHolder">
+        <div id="title"></div>
+        <div id="buttonScore">
+            <div class="scoreBd"> Score : <span id="score">0</span></div>
+            <div id="button">Reset</div>
+        </div>
+        <div class="mound mound1"></div>
+        <div class="mound mound2"></div>
+        <div class="mound mound3"></div>
+        <div class="mound mound4"></div>
+        <div class="mound mound5"></div>
+        <div class="mound mound6"></div>
+        <div class="mound mound7"></div>
+        <div class="mound mound8"></div>
+        <div class="mound mound9"></div>
+    </div>
+
+    <script>
+        // Add functionailty with JavaScript
+        // sets the score variable to zero
+        let score = 0;
+        // creates mounds object
+        let mounds = {}
+        // constants for elements
+        const scoreBd = document.getElementById('score'); 
+        const penguins = document.getElementsByClassName('mound');
+        
+        // function expression for clicking on each div
+        const poke = function (e) {
+            // checks if the click is valid
+            if (!e.isTrusted) return;
+            // looping through all 10 pengiun elements to have a counter
+            // furthermore this for loop is for only clicking each penguin element once for scoring instead of just clicking the same one for an infinite score accumulation
+            for(let i = 1; i < penguins.length; i++) {
+                // variable that makes the key to target the mounds object key that matches its class name
+                let moundKey = 'mound' + i;
+                // checks if the element clicked matches the key and class name
+                if (this.getAttribute('class') === 'mound mound' + i && mounds[moundKey] === 0) {
+                    // sets the current clicked element matching key value to 1
+                    mounds[moundKey] = 1;
+                    // increments score
+                    score++;
+                    // exits loop by pushing loop to max
+                    i = 10;
+                } else {
+                    // if mound element clicked and key doesnt match exit loop
+                    continue
+                }
+            }
+            // checks if clicked element has an id of yeti on it
+            if (this.getAttribute('id') === 'yeti') {
+                // loops through all penguin elements and removes event listeners
+                for (let j = 0; j < penguins.length; j++) {
+                    penguins[j].removeEventListener('click', poke, false);
+                }
+            } else {
+                // sets score to score board
+                scoreBd.textContent = score;
+            }
+        }
+        // the game function expression that sets up the game on load
+        const game = function () {
+            // for mounds counter
+            let moundKey;
+            // sets score to zero
+            score = 0;
+            // dispays score on score board
+            scoreBd.textContent = score;
+            // sets a random number in idx variable
+            let idx = Math.floor(Math.random() * 9);
+            // sets the yeti id on the random penguin element
+            penguins[idx].setAttribute('id', 'yeti');
+            // adds eventlistener to the yeti id element
+            document.getElementById('yeti').addEventListener('click', lose, false);
+            // loop that sets an event listener to all penguin elements
+            for (let i = 0; i < penguins.length; i++) {
+                penguins[i].addEventListener('click', poke, false);
+            }
+            // loop for mounds object that generates all the moundm keys that match their class names and sets to 0 to check if the mounds have been clicked before 0 = no and 1 = yes
+            for(let j = 1; j < penguins.length; j++) {
+                moundKey = 'mound' + j;
+                mounds[moundKey] = 0;
+            }
+        }
+        // reset function expression so you dont need to refresh the page
+        const reset = function() {
+            // sets score to zero
+            score = 0;
+            // removes eventlistener from yeti id element
+            document.getElementById('yeti').removeEventListener('click', lose, false);
+            // loop iterating over the penguin elements 
+            for(let i = 0; i < penguins.length; i++) {
+                // checking for the id of yeti
+                if (penguins[i].getAttribute('id') === 'yeti') {
+                    // removes the id attribute
+                    penguins[i].removeAttribute('id');
+                }
+                // removes the event listener from all penguin elements that runs the count
+                penguins[i].removeEventListener('click', poke, false);
+
+            }
+            // starts game function expression
+            game();
+        }
+        // yeti function expression for losing
+        const lose = function() {
+            // alerts you that you lost and found the yeti
+            alert("ROOOOOWWWRRRR! i'M THE YETI! YOU LOSE!!!");
+        }
+        // when page loads it starts the game function
+        window.onload = game();
+        // add eventlistener for reset button
+        document.getElementById('button').addEventListener('click', reset, false)
+
+    </script>
+</body>
+</html>
